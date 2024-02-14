@@ -78,6 +78,7 @@ class Trainer:
         self.iter_num = 0
         self.iter_time = time.time()
         data_iter = iter(train_loader)
+        self.losses = list()
         while True:
 
             # fetch the next batch (x, y) and re-init iterator if needed
@@ -103,6 +104,7 @@ class Trainer:
             tnow = time.time()
             self.iter_dt = tnow - self.iter_time
             self.iter_time = tnow
+            self.losses.append(self.loss.item())
 
             # termination conditions
             if config.max_iters is not None and self.iter_num >= config.max_iters:

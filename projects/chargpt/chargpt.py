@@ -102,6 +102,7 @@ if __name__ == '__main__':
     model = GPT(config.model)
 
     # construct the trainer object
+    config.trainer.max_iters = 210
     trainer = Trainer(config.trainer, model, train_dataset)
 
     # iteration callback
