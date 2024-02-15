@@ -212,6 +212,19 @@ class GPT(nn.Module):
 
         return model
 
+    def configure_schedulers(self, optimizer, train_config):
+        """
+        Get a scheduler
+        """
+        scheduler_str = train_config.scheduler_str
+        if scheduler_str == "StepLR":
+            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1, gamma=0.9, last_epoch=-1)
+        elif scheduler_str == "CosineAnnealingLR":
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 5, eta_min=0, last_epoch=-1)
+        else:
+            raise Exception(f"Scheduler \"{scheduler_str}\" not valid, use one of \"StepLR\" or \"CosineAnnealingLR\"")
+        return scheduler
+
     def configure_optimizers(self, train_config):
         """
         This long function is unfortunately doing something very simple and is being very defensive:

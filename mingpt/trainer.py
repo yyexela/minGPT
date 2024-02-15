@@ -4,6 +4,7 @@ so nothing in this file really has anything to do with GPT specifically.
 """
 
 import time
+import os
 from collections import defaultdict
 
 import torch
@@ -64,6 +65,9 @@ class Trainer:
         # setup the optimizer
         self.optimizer = model.configure_optimizers(config)
 
+        # setup the scheduler
+        self.scheduler = model.configure_schedulers(self.optimizer, config)
+
         # setup the dataloader
         train_loader = DataLoader(
             self.train_dataset,
@@ -80,6 +84,8 @@ class Trainer:
         data_iter = iter(train_loader)
         self.losses = list()
         while True:
+            # get current learning rate
+            self.lr = self.scheduler.get_last_lr()[0]
 
             # fetch the next batch (x, y) and re-init iterator if needed
             try:
