@@ -122,8 +122,8 @@ if __name__ == '__main__':
                 completion = ''.join([train_dataset.itos[int(i)] for i in y])
                 print(completion)
             # save the latest model
-            print("saving model")
             ckpt_path = os.path.join(config.system.work_dir, "model.pt")
+            print(f"Saving model to \"{ckpt_path}\"")
             torch.save(model.state_dict(), ckpt_path)
             # revert model to training mode
             model.train()
