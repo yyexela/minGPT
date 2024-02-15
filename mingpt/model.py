@@ -249,12 +249,24 @@ class GPT(nn.Module):
         assert len(param_dict.keys() - union_params) == 0, "parameters %s were not separated into either decay/no_decay set!" \
                                                     % (str(param_dict.keys() - union_params), )
 
-        # create the pytorch optimizer object
+        # separate pytorch params
         optim_groups = [
             {"params": [param_dict[pn] for pn in sorted(list(decay))], "weight_decay": train_config.weight_decay},
             {"params": [param_dict[pn] for pn in sorted(list(no_decay))], "weight_decay": 0.0},
         ]
-        optimizer = torch.optim.AdamW(optim_groups, lr=train_config.learning_rate, betas=train_config.betas)
+        
+        # create optimizer
+        optimizer_str = train_config.optimizer_str
+        if optimizer_str == 'AdamW':
+            optimizer = torch.optim.AdamW(optim_groups, lr=train_config.learning_rate, betas=train_config.betas)
+        elif optimizer_str == 'Adam':
+            optimizer = torch.optim.Adam(optim_groups, lr=train_config.learning_rate, betas=train_config.betas)
+        elif optimizer_str == 'RMSprop':
+            optimizer = torch.optim.Adam(optim_groups, lr=train_config.learning_rate)
+        elif optimizer_str == 'Adagrad':
+            optimizer = torch.optim.Adagrad(optim_groups, lr=train_config.learning_rate)
+        else:
+            raise Exception(f"Optimizer \"{optimizer_str}\" not valid, use one of \"Adam\", \"AdamW\", \"RMSprop\" or \"Adagrad\"")
         return optimizer
 
     def forward(self, idx, targets=None):
