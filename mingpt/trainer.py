@@ -83,6 +83,7 @@ class Trainer:
         self.iter_time = time.time()
         data_iter = iter(train_loader)
         self.losses = list()
+        self.lrs = list()
         while True:
             # get current learning rate
             self.lr = self.scheduler.get_last_lr()[0]
@@ -111,6 +112,7 @@ class Trainer:
             self.iter_dt = tnow - self.iter_time
             self.iter_time = tnow
             self.losses.append(self.loss.item())
+            self.lrs.append(self.lr)
 
             # termination conditions
             if config.max_iters is not None and self.iter_num >= config.max_iters:
